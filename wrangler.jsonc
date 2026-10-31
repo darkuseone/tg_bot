@@ -18,9 +18,9 @@
     "run_worker_first": true
   },
   "vars": {
-    // "1" — the owner (ADMIN_ID) pays 1 Star, everyone else pays the catalog price.
-    // Set to "0" after the test purchase and deploy again.
-    "TEST_MODE": "1",
+    // "0" — everyone, including the owner, pays the catalog price.
+    // "1" would charge only ADMIN_ID a single Star.
+    "TEST_MODE": "0",
     "APP_URL": "https://markus-brown.kiritosinse.workers.dev"
   },
   "secrets": {
