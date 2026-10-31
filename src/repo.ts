@@ -72,6 +72,7 @@ export interface Repo {
   isDelivered(chargeId: string): Promise<boolean>;
   markDelivered(chargeId: string): Promise<void>;
   listRefundable(userId: number, productId?: string): Promise<PurchaseRow[]>;
+  getRefundableByCharge(chargeId: string): Promise<PurchaseRow | null>;
   markRefunded(chargeId: string): Promise<boolean>;
   listProductFiles(productId: string): Promise<StoredFile[]>;
   replaceProductFiles(productId: string, files: StoredFile[]): Promise<void>;

@@ -145,6 +145,23 @@ export function createD1Repo(db: D1Database): Repo {
         }>();
       return rows.results.map(mapPurchase);
     },
+    async getRefundableByCharge(chargeId) {
+      const row = await db
+        .prepare(
+          `SELECT user_id, product, charge_id, amount, refunded, delivered
+           FROM purchases WHERE charge_id = ? AND refunded = 0`,
+        )
+        .bind(chargeId)
+        .first<{
+          user_id: number;
+          product: string;
+          charge_id: string;
+          amount: number;
+          refunded: number;
+          delivered: number;
+        }>();
+      return row ? mapPurchase(row) : null;
+    },
     async markRefunded(chargeId) {
       const result = await db
         .prepare(`UPDATE purchases SET refunded = 1 WHERE charge_id = ? AND refunded = 0`)

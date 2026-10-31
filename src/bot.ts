@@ -164,24 +164,16 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
 
   bot.command("refund", async (ctx) => {
     if (!isAdmin(ctx.from?.id)) return deny(ctx);
-    const parts = (typeof ctx.match === "string" ? ctx.match : "").trim().split(/\s+/).filter(Boolean);
-    const userId = Number(parts[0]);
-    const productId = parts[1];
-    if (!Number.isInteger(userId) || userId <= 0) {
-      await ctx.reply("Формат: /refund <user_id> [продукт]");
+    const from = ctx.from;
+    if (!from) return;
+    const chargeArg = (typeof ctx.match === "string" ? ctx.match : "").trim();
+    const row = chargeArg
+      ? await repo.getRefundableByCharge(chargeArg)
+      : (await repo.listRefundable(from.id))[0];
+    if (!row) {
+      await ctx.reply(chargeArg ? "Такого платежа нет." : "Активной покупки нет.");
       return;
     }
-    const rows = await repo.listRefundable(userId, productId);
-    if (rows.length === 0) {
-      await ctx.reply("Активной покупки нет.");
-      return;
-    }
-    if (rows.length > 1 && !productId) {
-      await ctx.reply(`Несколько покупок. Укажи продукт: ${rows.map((row) => row.product).join(", ")}`);
-      return;
-    }
-    const row = rows[0];
-    if (!row) return;
     try {
       await ctx.api.refundStarPayment(row.userId, row.chargeId);
     } catch (error) {
@@ -192,15 +184,7 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
       }
     }
     await repo.markRefunded(row.chargeId);
-    await ctx.reply(`Вернул ${row.amount} ⭐ пользователю ${row.userId} за ${row.product}.`);
-    try {
-      await ctx.api.sendMessage(
-        row.userId,
-        "По этой покупке оформили возврат звёзд. Если это ошибка — напиши /paysupport.",
-      );
-    } catch (error) {
-      log("error", "refund notice failed", { error: safeError(error) });
-    }
+    await ctx.reply(`Вернул ${row.amount} ⭐. Платёж ${row.chargeId}.`);
   });
 
   bot.command("broadcast", async (ctx) => {

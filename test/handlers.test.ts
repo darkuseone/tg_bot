@@ -82,7 +82,9 @@ describe("handlers", () => {
     await withBot({}, async ({ handle, calls, repo }) => {
       const payload = buildInvoicePayload("pixelverse", 7, 1);
       await handle(paymentUpdate(payload, 990, "chg-1"));
-      await handle(commandUpdate("/refund 7 pixelverse", 42));
+      await handle(commandUpdate("/refund chg-1", 7));
+      expect(calls.some((call) => call.method === "refundStarPayment")).toBe(false);
+      await handle(commandUpdate("/refund chg-1", 42));
       expect(calls.some((call) => call.method === "refundStarPayment")).toBe(true);
       expect(repo.purchases[0]?.refunded).toBe(true);
       await handle(commandUpdate("/mycourse", 7));

@@ -150,6 +150,11 @@ export class MemoryRepo implements Repo {
       .map((row) => ({ ...row }));
   }
 
+  async getRefundableByCharge(chargeId: string): Promise<PurchaseRow | null> {
+    const row = this.purchases.find((item) => item.chargeId === chargeId && !item.refunded);
+    return row ? { ...row } : null;
+  }
+
   async markRefunded(chargeId: string): Promise<boolean> {
     const row = this.purchases.find((item) => item.chargeId === chargeId && !item.refunded);
     if (!row) return false;
