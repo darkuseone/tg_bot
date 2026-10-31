@@ -50,8 +50,10 @@ describe("mini app copy", () => {
     const ui = `${html}\n${js}\n${css}`;
     const home = html.split('id="course"')[0] ?? html;
     expect(html).toContain("Привет, я Markus Brown 👋");
-    expect(html).toContain("<strong>ИИ не магия, а суперсила. Забирай свою →</strong>");
-    expect(html).toContain("Здесь собраны мои авторские курсы 🚀");
+    expect(html).toContain("ИИ не магия, а суперсила. Забирай свою 🔥");
+    expect(html).toContain("Курсы 🚀");
+    expect(css).toContain(".home-line");
+    expect(css).not.toMatch(/\.courses\s*\{[^}]*font-size:\s*16px/);
     expect(home).not.toContain("990");
     expect(html).toContain("marcus-photo.jpg");
     expect(html).toContain("pixelverse-tv.jpg");
@@ -62,6 +64,10 @@ describe("mini app copy", () => {
     expect(html).not.toContain("<video");
     expect(html).toContain('id="sparks"');
     expect(js).toContain("requestAnimationFrame");
+    expect(js).toContain("156, 72, 255");
+    expect(js).toContain("59, 140, 255");
+    expect(css).toMatch(/\.home-line\s*\{[^}]*font-size:\s*24px/);
+    expect(css).toMatch(/\.home-line\s*\{[^}]*font-weight:\s*700/);
     expect(html).toContain("Своя мультстудия с телефона или с компьютера");
     expect(html).toContain("Любой сериал на любую тему: твоя задумка, твои герои");
     expect(html).toContain("Площадки платят по своим правилам: реклама в Shorts, Reels и TikTok");

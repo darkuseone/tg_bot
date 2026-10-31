@@ -164,7 +164,7 @@ describe("start links and copy", () => {
 
   it("uses the mini app greeting, the course text, and generalized terms", () => {
     expect(START_TEXT).toBe(
-      "Привет, я Markus Brown 👋\nИИ не магия, а суперсила. Забирай свою →\nЗдесь собраны мои авторские курсы 🚀",
+      "Привет, я Markus Brown 👋\nИИ не магия, а суперсила. Забирай свою 🔥\nКурсы 🚀",
     );
     expect(START_TEXT).not.toContain("Добро пожаловать");
     expect(PIXEL_HOME.startsWith("Привет! Это PIXEL VERSE")).toBe(true);

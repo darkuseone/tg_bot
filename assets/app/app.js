@@ -1,20 +1,23 @@
 const PRODUCT = "pixelverse";
-const SPARK = "rgba(226, 59, 59,";
+const SPARK_COLORS = ["226, 59, 59", "156, 72, 255", "59, 140, 255"];
 
 const sparksCanvas = document.getElementById("sparks");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const sparks = Array.from({ length: 36 }, () => makeSpark(true));
+const sparks = Array.from({ length: 54 }, () => makeSpark(true));
 let sparkFrame = 0;
 let sparkStamp = 0;
 
 function makeSpark(anywhere) {
+  const angle = Math.random() * Math.PI * 2;
+  const speed = 0.18 + Math.random() * 0.42;
   return {
-    x: anywhere ? Math.random() : -0.04,
-    y: Math.random(),
-    speed: 0.08 + Math.random() * 0.14,
-    drift: (Math.random() - 0.5) * 0.015,
-    alpha: 0.35 + Math.random() * 0.4,
-    length: 5 + Math.random() * 7,
+    x: anywhere ? Math.random() : Math.random(),
+    y: anywhere ? Math.random() : Math.random(),
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    radius: 2 + Math.random() * 9,
+    alpha: 0.55 + Math.random() * 0.4,
+    color: SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)],
   };
 }
 
@@ -36,13 +39,19 @@ function drawSparks(now) {
   ctx.fillStyle = "#0B0B0D";
   ctx.fillRect(0, 0, width, height);
   for (const spark of sparks) {
-    spark.x += spark.speed * step;
-    spark.y += spark.drift * step;
-    if (spark.x > 1.05 || spark.y < -0.05 || spark.y > 1.05) Object.assign(spark, makeSpark(false));
+    spark.x += spark.vx * step;
+    spark.y += spark.vy * step;
+    if (spark.x < -0.08 || spark.x > 1.08 || spark.y < -0.08 || spark.y > 1.08) {
+      Object.assign(spark, makeSpark(false));
+      if (Math.abs(spark.vx) > Math.abs(spark.vy)) spark.x = spark.vx > 0 ? -0.06 : 1.06;
+      else spark.y = spark.vy > 0 ? -0.06 : 1.06;
+    }
     const x = spark.x * width;
     const y = spark.y * height;
-    ctx.fillStyle = `${SPARK} ${spark.alpha})`;
-    ctx.fillRect(x, y, spark.length, 2);
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(${spark.color}, ${spark.alpha})`;
+    ctx.arc(x, y, spark.radius, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
