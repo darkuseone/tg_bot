@@ -1,28 +1,41 @@
 const PRODUCT = "pixelverse";
-const SPARK_COLORS = ["226, 59, 59", "156, 72, 255", "59, 140, 255"];
+const SPARK_COLORS = [
+  [255, 45, 85],
+  [255, 45, 85],
+  [139, 92, 246],
+  [59, 130, 246],
+];
 
 const sparksCanvas = document.getElementById("sparks");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const sparks = Array.from({ length: 54 }, () => makeSpark(true));
+const lowPower = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.connection && navigator.connection.saveData);
+const sparkCount = lowPower ? 42 : 78;
+const sparks = Array.from({ length: sparkCount }, () => makeSpark());
+const bokeh = Array.from({ length: 4 }, () => ({
+  x: Math.random(),
+  y: Math.random(),
+  r: 26 + Math.random() * 30,
+  vy: 0.015 + Math.random() * 0.02,
+  color: SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)],
+}));
 let sparkFrame = 0;
 let sparkStamp = 0;
 
-function makeSpark(anywhere) {
-  const angle = Math.random() * Math.PI * 2;
-  const speed = 0.18 + Math.random() * 0.42;
+function makeSpark() {
+  const color = SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)];
   return {
-    x: anywhere ? Math.random() : Math.random(),
-    y: anywhere ? Math.random() : Math.random(),
-    vx: Math.cos(angle) * speed,
-    vy: Math.sin(angle) * speed,
-    radius: 2 + Math.random() * 9,
-    alpha: 0.55 + Math.random() * 0.4,
-    color: SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)],
+    x: Math.random(),
+    y: Math.random(),
+    vx: (Math.random() - 0.5) * 0.04,
+    vy: -(0.12 + Math.random() * 0.22),
+    size: 1 + Math.random() * 1.5,
+    flicker: Math.random() * Math.PI * 2,
+    color,
   };
 }
 
 function resizeSparks() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const width = sparksCanvas.clientWidth;
   const height = sparksCanvas.clientHeight;
   sparksCanvas.width = Math.max(1, Math.floor(width * dpr));
@@ -36,23 +49,48 @@ function drawSparks(now) {
   const height = sparksCanvas.clientHeight;
   const step = Math.min(0.05, (now - (sparkStamp || now)) / 1000 || 0.016);
   sparkStamp = now;
-  ctx.fillStyle = "#0B0B0D";
-  ctx.fillRect(0, 0, width, height);
+  ctx.clearRect(0, 0, width, height);
+  ctx.globalCompositeOperation = "source-over";
+  for (const orb of bokeh) {
+    orb.y -= orb.vy * step;
+    if (orb.y < -0.15) orb.y = 1.1;
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(${orb.color[0]}, ${orb.color[1]}, ${orb.color[2]}, 0.14)`;
+    ctx.shadowColor = ctx.fillStyle;
+    ctx.shadowBlur = 48;
+    ctx.arc(orb.x * width, orb.y * height, orb.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalCompositeOperation = "lighter";
   for (const spark of sparks) {
     spark.x += spark.vx * step;
     spark.y += spark.vy * step;
-    if (spark.x < -0.08 || spark.x > 1.08 || spark.y < -0.08 || spark.y > 1.08) {
-      Object.assign(spark, makeSpark(false));
-      if (Math.abs(spark.vx) > Math.abs(spark.vy)) spark.x = spark.vx > 0 ? -0.06 : 1.06;
-      else spark.y = spark.vy > 0 ? -0.06 : 1.06;
+    spark.flicker += step * 6;
+    if (spark.y < -0.05) {
+      spark.y = 1.02;
+      spark.x = Math.random();
     }
+    const fade = Math.max(0, Math.min(1, spark.y));
+    const alpha = (0.35 + 0.45 * Math.abs(Math.sin(spark.flicker))) * fade;
     const x = spark.x * width;
     const y = spark.y * height;
+    const [r, g, b] = spark.color;
+    ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.shadowColor = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    ctx.shadowBlur = 8;
+    ctx.lineWidth = spark.size;
+    ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.fillStyle = `rgba(${spark.color}, ${spark.alpha})`;
-    ctx.arc(x, y, spark.radius, 0, Math.PI * 2);
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - spark.vx * width * 0.08, y - spark.vy * height * 0.045);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, spark.size, 0, Math.PI * 2);
     ctx.fill();
   }
+  ctx.shadowBlur = 0;
+  ctx.globalCompositeOperation = "source-over";
 }
 
 function loopSparks(now) {
@@ -144,7 +182,7 @@ function applyProduct(product) {
   pay.hidden = false;
   openChat.hidden = true;
   payCopy.hidden = false;
-  pay.textContent = `Оплатить ${product.invoiceStars} ⭐`;
+  pay.textContent = `Купить за ${product.invoiceStars} ⭐`;
 }
 
 async function refresh() {
@@ -171,6 +209,10 @@ document.getElementById("catalog").addEventListener("click", (event) => {
   const node = event.target instanceof Element ? event.target : event.target.parentElement;
   const card = node && node.closest("[data-product]");
   if (!card) return;
+  const tg = telegram();
+  if (tg && tg.HapticFeedback && typeof tg.HapticFeedback.impactOccurred === "function") {
+    tg.HapticFeedback.impactOccurred("light");
+  }
   showCourse(true);
 });
 
@@ -234,8 +276,8 @@ function boot() {
     tg.ready();
     tg.expand();
     try {
-      tg.setHeaderColor("#0B0B0D");
-      tg.setBackgroundColor("#0B0B0D");
+      tg.setHeaderColor("#0b0b12");
+      tg.setBackgroundColor("#0b0b12");
     } catch {
       /* older clients */
     }
