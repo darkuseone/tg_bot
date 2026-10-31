@@ -172,8 +172,8 @@ function boot() {
     tg.ready();
     tg.expand();
     try {
-      tg.setHeaderColor("#07080c");
-      tg.setBackgroundColor("#07080c");
+      tg.setHeaderColor("#0B0B0D");
+      tg.setBackgroundColor("#0B0B0D");
     } catch {
       /* older clients */
     }
