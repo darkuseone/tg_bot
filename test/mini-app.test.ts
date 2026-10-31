@@ -49,9 +49,11 @@ describe("mini app copy", () => {
     const css = readFileSync("assets/app/app.css", "utf8");
     const ui = `${html}\n${js}\n${css}`;
     const home = html.split('id="course"')[0] ?? html;
-    expect(html).toContain("Привет, я Markus Brown 👋");
-    expect(html.replace(/<[^>]+>/g, "")).toContain("ИИ не магия, а суперсила. Забирай свою 🔥");
-    expect(html).toContain("Курсы 🚀");
+    const greeting = html.replace(/&nbsp;/g, " ").replace(/<[^>]+>/g, "");
+    expect(greeting).toContain("Привет, я Markus Brown 👋");
+    expect(greeting).toContain("ИИ не магия, а суперсила.");
+    expect(greeting).toContain("Забирай свою 🔥");
+    expect(greeting).toContain("Курсы 🚀");
     expect(css).toContain(".home-line");
     expect(css).not.toMatch(/\.courses\s*\{[^}]*font-size:\s*16px/);
     expect(home).not.toContain("990");
@@ -67,7 +69,8 @@ describe("mini app copy", () => {
     expect(js).toContain("139, 92, 246");
     expect(js).toContain("59, 130, 246");
     expect(css).toContain("-webkit-backdrop-filter");
-    expect(css).toMatch(/\.home-line\s*\{[^}]*font-size:\s*27px/);
+    expect(css).toMatch(/\.home-line\s*\{[^}]*font-size:\s*20px/);
+    expect(css).toMatch(/white-space:\s*nowrap/);
     expect(css).toMatch(/\.home-line\s*\{[^}]*font-weight:\s*800/);
     expect(html).toContain("Своя мультстудия с телефона или с компьютера");
     expect(html).toContain("Любой сериал на любую тему: твоя задумка, твои герои");
