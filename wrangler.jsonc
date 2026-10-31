@@ -1,0 +1,41 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "markus-brown",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-31",
+  "compatibility_flags": ["nodejs_compat"],
+  "upload_source_maps": true,
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 1 }
+  },
+  "assets": {
+    "directory": "./assets",
+    "binding": "ASSETS",
+    // Every request, including the webhook, is handled by the Worker.
+    // Pictures are read through the ASSETS binding and are not a public page.
+    "run_worker_first": true
+  },
+  "vars": {
+    // "0" — everyone, including the owner, pays the catalog price.
+    // "1" would charge only ADMIN_ID a single Star.
+    "TEST_MODE": "0",
+    "APP_URL": "https://markus-brown.kiritosinse.workers.dev"
+  },
+  "secrets": {
+    "required": ["TELEGRAM_BOT_TOKEN", "ADMIN_ID", "WEBHOOK_SECRET"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "markus-brown",
+      // Replaced with the real id when the database is created.
+      "database_id": "5c21152f-1d30-48d7-9bd3-0ff3a66d8e90",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "triggers": {
+    "crons": ["* * * * *"]
+  }
+}

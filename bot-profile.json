@@ -1,0 +1,11 @@
+{
+  "name": "Markus Brown",
+  "short_description": "Markus Brown — курсы о пиксельных мультиках и нейросетях. Первый — PIXEL VERSE: мультстудия в кармане.",
+  "description": "Привет! Я Markus Brown, автор канала PIXEL VERSE ^^ 👾 Здесь мои курсы и цифровые продукты. Первый — «Мультстудия в кармане»: как делать смешные пиксельные мультики для Shorts, Reels и TikTok через нейросеть Claude, с телефона, без рисования и программирования. Жми «Старт» 👇",
+  "commands": [
+    { "command": "start", "description": "Начать" },
+    { "command": "mycourse", "description": "Мои покупки" },
+    { "command": "paysupport", "description": "Помощь с оплатой" },
+    { "command": "terms", "description": "Условия" }
+  ]
+}

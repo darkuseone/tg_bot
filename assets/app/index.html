@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b0b12" />
+    <title>Markus Brown</title>
+    <link rel="stylesheet" href="/app/app.css?v=b557ff6379" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  </head>
+  <body>
+    <div class="aurora" aria-hidden="true">
+      <span class="blob red"></span>
+      <span class="blob violet"></span>
+      <span class="blob blue"></span>
+    </div>
+    <canvas id="sparks" aria-hidden="true"></canvas>
+    <main>
+      <section id="home">
+        <div class="avatar rise" style="--d: 0">
+          <img class="portrait" src="/media/marcus-photo.jpg" alt="Markus Brown" />
+        </div>
+        <div class="copy glass rise" style="--d: 1">
+          <p class="home-line">Привет, я Markus Brown&nbsp;👋</p>
+          <p class="home-line">ИИ не магия, а <span class="grad">суперсила</span>.</p>
+          <p class="home-line">Забирай свою&nbsp;🔥 Курсы&nbsp;🚀</p>
+        </div>
+        <p class="down rise" style="--d: 2" aria-hidden="true"><span>↓</span></p>
+        <div class="catalog" id="catalog">
+          <button type="button" class="hero rise" style="--d: 3" data-product="pixelverse">
+            <span class="hero-inner">
+              <span class="hero-art">
+                <span class="hero-slice hero-slice-title">
+                  <img src="/media/pixelverse-tv.jpg" alt="PIXEL VERSE" />
+                </span>
+                <span class="hero-slice hero-slice-tv">
+                  <img src="/media/pixelverse-tv.jpg" alt="" />
+                </span>
+              </span>
+              <span class="hero-body">
+                <span class="pill">КУРС</span>
+                <span class="hero-name">PIXEL VERSE</span>
+                <span class="hero-sub">Мультстудия в кармане</span>
+                <span class="chips">
+                  <span class="chip">С телефона или ПК</span>
+                  <span class="chip">С нуля</span>
+                  <span class="chip">Готовые промты</span>
+                </span>
+                <span class="cta">Смотреть курс →</span>
+              </span>
+            </span>
+          </button>
+        </div>
+        <article class="soon glass rise" style="--d: 4">
+          <span class="lock" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22">
+              <rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.8" />
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.8" />
+            </svg>
+          </span>
+          <span>
+            <strong>Скоро новые курсы ✨</strong>
+            <span class="soon-note">Появятся в этой витрине</span>
+          </span>
+        </article>
+        <p class="foot rise" style="--d: 5">Markus Brown</p>
+        <p id="preview" class="preview" hidden>Открой в Telegram, чтобы оплатить.</p>
+      </section>
+
+      <section id="course" hidden>
+        <button type="button" class="back glass" id="back">‹ Главная</button>
+        <div class="cover-wrap rise" style="--d: 0">
+          <img class="cover" src="/media/pixelverse-tv.jpg" alt="PIXEL VERSE" />
+        </div>
+        <div class="glass sheet rise" style="--d: 1">
+          <h2>Мультстудия в кармане</h2>
+          <p class="promise">
+            Полный курс от и до. Легко: справится человек, который просто умеет пользоваться телефоном или компьютером и ни разу не работал с нейросетями.
+          </p>
+        </div>
+        <h3 class="rise" style="--d: 2">Что внутри</h3>
+        <ul class="inside glass rise" style="--d: 2">
+          <li>курс от первого шага до готового мультика</li>
+          <li>шпаргалка промтов: копируй и вставляй</li>
+          <li>чек-листы на каждый шаг</li>
+          <li>стартовый набор для Claude</li>
+        </ul>
+        <h3 class="rise" style="--d: 3">Модули</h3>
+        <ol class="modules rise" style="--d: 3">
+          <li>0. Как всё устроено</li>
+          <li>1. Три аккаунта</li>
+          <li>2. Твоя мастерская</li>
+          <li>3. Первый запуск</li>
+          <li>4. Стиль</li>
+          <li>5. Формула серии</li>
+          <li>6. Голоса и звук</li>
+          <li>7. От команды до видео</li>
+          <li>8. Обложка и выкладка</li>
+          <li>9. Ошибки и ответы</li>
+        </ol>
+        <h3>Материалы</h3>
+        <ul class="files glass locked" id="files">
+          <li>Курс «Мультстудия в кармане»</li>
+          <li>Промты — шпаргалка</li>
+          <li>Чек-листы</li>
+          <li>Стартовый набор</li>
+        </ul>
+        <section class="glass feature rise" style="--d: 4">
+          <h3><span class="badge rose" aria-hidden="true">✦</span>Что ты получишь</h3>
+          <ul>
+            <li>Своя мультстудия с телефона или с компьютера</li>
+            <li>Любой сериал на любую тему: твоя задумка, твои герои</li>
+            <li>Готовые промты, чек-листы и стартовый набор</li>
+            <li>Без рисования и без программирования</li>
+          </ul>
+        </section>
+        <section class="glass feature rise" style="--d: 5">
+          <h3><span class="badge blue" aria-hidden="true">◈</span>Как монетизировать</h3>
+          <ul>
+            <li>Площадки платят по своим правилам: реклама в Shorts, Reels и TikTok</li>
+            <li>Бренды и интеграции, когда сериал узнают</li>
+            <li>Свои продукты и мультики на заказ</li>
+          </ul>
+        </section>
+        <div class="faq glass">
+          <details>
+            <summary>Вопросы</summary>
+            <div class="faq-panel">
+              <div class="faq-clip">
+                <p>Рисовать и программировать не нужно. Хватит телефона или компьютера.</p>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary>Я никогда не работал с ИИ — у меня получится?</summary>
+            <div class="faq-panel">
+              <div class="faq-clip">
+                <p>Да. Курс очень подробный и рассчитан на новичков: всё разобрано пошагово, с готовыми промтами. Даже если ты ни разу не открывал нейросети, сможешь повторить и сделать свой мульт.</p>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary>Нужен ли мощный компьютер?</summary>
+            <div class="faq-panel">
+              <div class="faq-clip">
+                <p>Нет. Всё делается с телефона или с обычного ПК.</p>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary>Что я получу после оплаты?</summary>
+            <div class="faq-panel">
+              <div class="faq-clip">
+                <p>Материалы курса придут сразу в этот чат с ботом. Они останутся у тебя, можно проходить в своём темпе.</p>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <div class="paydock glass" id="paydock" hidden>
+      <div id="pay-copy">
+        <p>Ты готов погрузиться в мир ИИ?</p>
+        <p>Хватит почты и телефона или компьютера.</p>
+      </div>
+      <button type="button" class="pay" id="pay">Купить за 990 ⭐</button>
+      <button type="button" class="pay ghost" id="open-chat" hidden>Открыть в чате</button>
+    </div>
+    <p id="toast" class="toast glass" hidden role="status"></p>
+    <script src="/app/app.js?v=b557ff6379"></script>
+  </body>
+</html>
