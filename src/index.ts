@@ -4,15 +4,11 @@ import { BROADCAST_BATCH_SIZE, drainBroadcastQueue, sendTelegramText } from "./b
 import { createBot } from "./bot";
 import { createD1Repo } from "./d1-repo";
 import { log, safeError } from "./log";
+import { handleAppRequest } from "./mini-http";
+import { callTelegram } from "./telegram";
 import { verifyWebhookSecret } from "./webhook-auth";
 
 let cachedBotInfo: UserFromGetMe | undefined;
-
-async function bundledImage(env: Env, fileName: string): Promise<Uint8Array | null> {
-  const response = await env.ASSETS.fetch(new Request(`https://assets.local/${fileName}`));
-  if (!response.ok) return null;
-  return new Uint8Array(await response.arrayBuffer());
-}
 
 async function runBroadcast(env: Env): Promise<void> {
   const repo = createD1Repo(env.DB);
@@ -38,6 +34,18 @@ export default {
     if (request.method === "GET" && url.pathname === "/") {
       return Response.json({ ok: true, service: "markus-brown" });
     }
+    const appResponse = await handleAppRequest(request, {
+      assets: env.ASSETS,
+      runtime: () => ({
+        token: env.TELEGRAM_BOT_TOKEN,
+        adminId: env.ADMIN_ID,
+        testMode: env.TEST_MODE,
+        repo: createD1Repo(env.DB),
+        now: () => new Date(),
+        callTelegram: (method, body) => callTelegram(env.TELEGRAM_BOT_TOKEN, method, body),
+      }),
+    });
+    if (appResponse) return appResponse;
     if (request.method !== "POST" || url.pathname !== "/webhook") {
       return new Response("not found", { status: 404 });
     }
@@ -53,8 +61,8 @@ export default {
           token: env.TELEGRAM_BOT_TOKEN,
           adminId: env.ADMIN_ID,
           testMode: env.TEST_MODE,
+          appUrl: env.APP_URL,
           repo: createD1Repo(env.DB),
-          loadImage: (fileName) => bundledImage(env, fileName),
           now: () => new Date(),
         },
         cachedBotInfo,

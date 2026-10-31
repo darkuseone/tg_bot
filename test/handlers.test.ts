@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildInvoicePayload } from "../src/payload";
-import { FILE_CAPTIONS } from "../src/texts";
+import { FILE_CAPTIONS, START_TEXT } from "../src/texts";
 import {
   callbackUpdate,
   commandUpdate,
@@ -11,47 +11,38 @@ import {
 } from "./harness";
 
 describe("handlers", () => {
-  it("opens the brand screen and remembers the source", async () => {
+  it("opens the mini app and remembers the source", async () => {
     await withBot({}, async ({ handle, calls, repo }) => {
       await handle(commandUpdate("/start tiktok"));
-      const photo = calls.find((call) => call.method === "sendPhoto");
-      expect(photo?.body.caption).toContain("Привет, я Markus Brown");
-      expect(JSON.stringify(photo?.body.reply_markup)).toContain("PIXEL VERSE");
-      expect(String(photo?.body.caption)).not.toContain("Привет! Это PIXEL VERSE");
+      const message = calls.find((call) => call.method === "sendMessage");
+      expect(message?.body.text).toBe(START_TEXT);
+      expect(String(message?.body.text)).not.toContain("Добро пожаловать");
+      const markup = JSON.stringify(message?.body.reply_markup);
+      expect(markup).toContain("Открыть");
+      expect(markup).toContain("https://markus-brown.kiritosinse.workers.dev/app");
+      expect(markup).not.toContain("PIXEL VERSE");
+      expect(calls.some((call) => call.method === "sendPhoto")).toBe(false);
       expect(repo.users.get(7)?.source).toBe("tiktok");
     });
   });
 
-  it("opens PIXEL VERSE from a deep link and from the catalog button", async () => {
+  it("keeps a course deep link on the open button and remembers the source", async () => {
     await withBot({}, async ({ handle, calls, repo }) => {
       await handle(commandUpdate("/start pixelverse_youtube"));
-      const photo = calls.find((call) => call.method === "sendPhoto");
-      expect(photo?.body.caption).toContain("Привет! Это PIXEL VERSE");
-      expect(JSON.stringify(photo?.body.reply_markup)).toContain("Купить курс");
+      const message = calls.find((call) => call.method === "sendMessage");
+      expect(message?.body.text).toBe(START_TEXT);
+      expect(JSON.stringify(message?.body.reply_markup)).toContain("/app#pixelverse");
       expect(repo.users.get(7)?.source).toBe("youtube");
     });
   });
 
-  it("falls back to text when the cover file is missing", async () => {
-    await withBot({ loadImage: async () => null }, async ({ handle, calls }) => {
-      await handle(callbackUpdate("p:pixelverse:home"));
-      expect(calls.some((call) => call.method === "sendPhoto")).toBe(false);
-      const text = calls.find((call) => call.method === "sendMessage");
-      expect(text?.body.text).toContain("Привет! Это PIXEL VERSE");
-    });
-  });
-
-  it("sends a 990-star invoice and a 1-star invoice for the owner in test mode", async () => {
-    await withBot({ testMode: "1" }, async ({ handle, calls }) => {
-      await handle(callbackUpdate("p:pixelverse:pay", 7));
-      await handle(callbackUpdate("p:pixelverse:pay", 42));
-      const invoices = calls.filter((call) => call.method === "sendInvoice");
-      expect(invoices[0]?.body).toMatchObject({
-        currency: "XTR",
-        provider_token: "",
-        prices: [{ label: "Курс", amount: 990 }],
-      });
-      expect(invoices[1]?.body.prices).toEqual([{ label: "Курс", amount: 1 }]);
+  it("sends old catalog buttons to the mini app", async () => {
+    await withBot({}, async ({ handle, calls }) => {
+      await handle(callbackUpdate("p:pixelverse:pay"));
+      const message = calls.find((call) => call.method === "sendMessage");
+      expect(message?.body.text).toBe(START_TEXT);
+      expect(JSON.stringify(message?.body.reply_markup)).toContain("web_app");
+      expect(calls.some((call) => call.method === "sendInvoice")).toBe(false);
     });
   });
 
@@ -125,12 +116,4 @@ describe("handlers", () => {
     });
   });
 
-  it("reuses a stored picture id", async () => {
-    await withBot({}, async ({ handle, calls, repo }) => {
-      await repo.setMedia("main", "stored-main", "now");
-      await handle(commandUpdate("/start"));
-      const photo = calls.find((call) => call.method === "sendPhoto");
-      expect(photo?.body.photo).toBe("stored-main");
-    });
-  });
 });

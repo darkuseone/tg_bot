@@ -114,7 +114,6 @@ export async function withBot(
     adminId?: string;
     testMode?: string;
     repo?: MemoryRepo;
-    loadImage?: (fileName: string) => Promise<Uint8Array | null>;
   },
   run: (tools: { repo: MemoryRepo; calls: ApiCall[]; handle: (update: unknown) => Promise<void> }) => Promise<void>,
 ): Promise<void> {
@@ -125,8 +124,8 @@ export async function withBot(
       token: "test-token",
       adminId: options.adminId ?? "42",
       testMode: options.testMode ?? "0",
+      appUrl: "https://markus-brown.kiritosinse.workers.dev",
       repo,
-      loadImage: options.loadImage ?? (async () => new Uint8Array([1, 2, 3, 4])),
       now: () => new Date("2026-10-31T00:00:00.000Z"),
     },
     me,

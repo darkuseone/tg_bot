@@ -37,6 +37,13 @@ await api("setWebhook", {
   allowed_updates: ["message", "callback_query", "pre_checkout_query"],
   drop_pending_updates: false,
 });
+await api("setChatMenuButton", {
+  menu_button: {
+    type: "web_app",
+    text: "Открыть",
+    web_app: { url: `${workerUrl}/app` },
+  },
+});
 
 const me = await api("getMe", {});
 const hook = await api("getWebhookInfo", {});
@@ -45,6 +52,7 @@ console.log(
   JSON.stringify(
     {
       username: me.username,
+      has_main_web_app: me.has_main_web_app === true,
       webhook_url: hook.url,
       pending_update_count: hook.pending_update_count,
       last_error_message: lastError,

@@ -20,7 +20,8 @@
   "vars": {
     // "1" — the owner (ADMIN_ID) pays 1 Star, everyone else pays the catalog price.
     // Set to "0" after the test purchase and deploy again.
-    "TEST_MODE": "1"
+    "TEST_MODE": "1",
+    "APP_URL": "https://markus-brown.kiritosinse.workers.dev"
   },
   "secrets": {
     "required": ["TELEGRAM_BOT_TOKEN", "ADMIN_ID", "WEBHOOK_SECRET"]

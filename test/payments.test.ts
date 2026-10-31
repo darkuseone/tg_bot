@@ -13,13 +13,12 @@ import { formatStats } from "../src/stats";
 import {
   INVOICE_DESCRIPTION,
   INVOICE_TITLE,
-  MAIN_CAPTION,
   PAYSUPPORT_TEXT,
   PIXEL_CHECKOUT,
   PIXEL_HOME,
   STAR_PRICE,
+  START_TEXT,
   TERMS_TEXT,
-  mainCaption,
 } from "../src/texts";
 import { verifyWebhookSecret } from "../src/webhook-auth";
 import { drainBroadcastQueue } from "../src/broadcast";
@@ -163,12 +162,12 @@ describe("start links and copy", () => {
     expect(parseStartPayload("bad tag", ["pixelverse"]).source).toBeNull();
   });
 
-  it("uses the brand screen, the course text, and generalized terms", () => {
-    expect(mainCaption(false)).toBe(MAIN_CAPTION);
-    expect(mainCaption(true).startsWith("С возвращением!")).toBe(true);
-    expect(MAIN_CAPTION).toContain("Привет, я Markus Brown");
+  it("uses the mini app greeting, the course text, and generalized terms", () => {
+    expect(START_TEXT).toBe("Привет, я Markus Brown\nИИ не магия, а суперсила, забирай свою");
+    expect(START_TEXT).not.toContain("Добро пожаловать");
     expect(PIXEL_HOME.startsWith("Привет! Это PIXEL VERSE")).toBe(true);
-    expect(PIXEL_CHECKOUT).toContain("anthropic.com/supported-countries");
+    expect(PIXEL_CHECKOUT).toBe("Ты готов погрузиться в мир ИИ?\nХватит почты и телефона или компьютера.");
+    expect(PIXEL_CHECKOUT).not.toContain("anthropic");
     expect(TERMS_TEXT).toContain("Цифровые продукты");
     expect(TERMS_TEXT).not.toMatch(/курс/i);
     expect(PAYSUPPORT_TEXT).toContain("/mycourse");
@@ -180,7 +179,7 @@ describe("start links and copy", () => {
     expect(profile.description.length).toBeLessThanOrEqual(512);
     expect(INVOICE_TITLE.length).toBeLessThanOrEqual(32);
     expect(INVOICE_DESCRIPTION.length).toBeLessThanOrEqual(255);
-    expect(MAIN_CAPTION.length).toBeLessThanOrEqual(1024);
+    expect(START_TEXT.length).toBeLessThanOrEqual(1024);
     expect(PIXEL_HOME.length).toBeLessThanOrEqual(1024);
     expect(profile.commands.map((command) => command.description)).toEqual([
       "Начать",

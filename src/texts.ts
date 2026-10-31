@@ -1,9 +1,7 @@
 export const STAR_PRICE = 990;
 
-export const MAIN_CAPTION = `Привет, я Markus Brown 👋
-Добро пожаловать в мой мир ИИ 🔴
-Здесь нейросети работают на тебя, а я покажу как: просто, без кода, прямо с телефона.
-Выбирай, с чего начать 👇`;
+export const START_TEXT = `Привет, я Markus Brown
+ИИ не магия, а суперсила, забирай свою`;
 
 export const PIXEL_HOME = `Привет! Это PIXEL VERSE ^^ 👾
 Видел наших Валеру, кота и Мазутыча? Их никто не рисовал руками. Сценарий, героев, голоса, звук и монтаж делает нейросеть Claude — с обычного телефона.
@@ -60,13 +58,6 @@ export const PIXEL_FAQ = `❓ Нужно уметь рисовать или пр
 ❓ Сколько времени уходит на серию?
 У Claude — 20–40 минут. У тебя — 5 минут: посмотреть и написать «ок» или правки.
 
-❓ Какие подписки нужны?
-Claude Pro ($20/мес) и ElevenLabs Starter (около $6/мес). GitHub бесплатный.
-
-❓ Работает в моей стране?
-Claude доступен не во всех странах. Проверь свою страну до покупки:
-anthropic.com/supported-countries
-
 ❓ Можно делать мультики на английском для США?
 Да. В курсе есть настройка рынка: Claude ищет американские мемы и делает голоса с акцентами.
 
@@ -76,13 +67,8 @@ anthropic.com/supported-countries
 ❓ Нет Звёзд, есть TON?
 Звёзды можно купить за TON на fragment.com или в @PremiumBot, а потом оплатить курс.`;
 
-export const PIXEL_CHECKOUT = `Последний шаг перед оплатой ✅
-Проверь три вещи:
-1. Твоя страна есть в списке Claude: anthropic.com/supported-countries
-2. Ты готов оформить Claude Pro ($20/мес) и ElevenLabs Starter (около $6/мес)
-3. У тебя есть почта и телефон или компьютер
-
-Всё ок? Жми кнопку — курс придёт в этот чат сразу после оплаты.`;
+export const PIXEL_CHECKOUT = `Ты готов погрузиться в мир ИИ?
+Хватит почты и телефона или компьютера.`;
 
 export const PIXEL_THANKS = `Готово! Добро пожаловать в студию 🎉
 Лови курс — 4 файла ниже.
@@ -120,11 +106,3 @@ export const FILE_CAPTIONS = [
 export const MAIN_IMAGE_FILE = "brand-cover.jpg";
 export const MAIN_IMAGE_SLOT = "main";
 
-export function mainCaption(returning: boolean): string {
-  if (!returning) return MAIN_CAPTION;
-  return `С возвращением!\n\n${MAIN_CAPTION}`;
-}
-
-export function testCheckoutNote(priceStars: number): string {
-  return `\n\nТестовый режим: счёт для тебя будет на 1 ⭐. Для остальных цена ${priceStars} ⭐.`;
-}

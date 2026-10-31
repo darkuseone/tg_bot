@@ -1,31 +1,22 @@
-import { Bot, GrammyError, InlineKeyboard, InputFile, type Context } from "grammy";
+import { Bot, GrammyError, InlineKeyboard, type Context } from "grammy";
 import type { UserFromGetMe } from "grammy/types";
-import { getProduct, listAllProducts, listVisibleProducts, productIds, type Product } from "./catalog";
+import { miniAppUrl } from "./app-url";
+import { getProduct, listAllProducts, productIds, type Product } from "./catalog";
 import { log, safeError } from "./log";
-import { buildInvoicePayload, parseInvoicePayload } from "./payload";
+import { parseInvoicePayload } from "./payload";
 import { applySuccessfulPayment, type SuccessResult } from "./payments";
 import { checkInvoice } from "./invoice";
-import { isTestMode, priceForUser } from "./pricing";
 import type { Repo, StoredFile } from "./repo";
 import { formatStats } from "./stats";
 import { parseStartPayload } from "./start";
-import {
-  MAIN_IMAGE_FILE,
-  MAIN_IMAGE_SLOT,
-  PAYSUPPORT_TEXT,
-  TERMS_TEXT,
-  mainCaption,
-  testCheckoutNote,
-} from "./texts";
-
-const CAPTION_LIMIT = 1024;
+import { MAIN_IMAGE_SLOT, PAYSUPPORT_TEXT, START_TEXT, TERMS_TEXT } from "./texts";
 
 export interface BotDeps {
   token: string;
   adminId: string;
   testMode: string;
+  appUrl: string;
   repo: Repo;
-  loadImage: (fileName: string) => Promise<Uint8Array | null>;
   now: () => Date;
 }
 
@@ -142,14 +133,7 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
     if (!from) return;
     const parsed = parseStartPayload(typeof ctx.match === "string" ? ctx.match : "", productIds());
     if (parsed.source) await repo.setSourceIfEmpty(from.id, parsed.source);
-    if (parsed.productId) {
-      const product = getProduct(parsed.productId);
-      if (product && !product.hidden) {
-        await showProduct(ctx, product);
-        return;
-      }
-    }
-    await showMain(ctx, from.id);
+    await showOpen(ctx, parsed.productId);
   });
 
   bot.command("mycourse", async (ctx) => {
@@ -332,7 +316,7 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
     }
     const from = ctx.from;
     if (data === "go:main") {
-      await showMain(ctx, from.id);
+      await showOpen(ctx, null);
       return;
     }
     if (data === "go:mine") {
@@ -355,34 +339,11 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
       await ctx.reply("Этот продукт ещё не открыт.");
       return;
     }
-    switch (action) {
-      case "home":
-        await showProduct(ctx, product);
-        break;
-      case "in":
-        await ctx.reply(product.screens.inside, { reply_markup: subKeyboard(product.id) });
-        break;
-      case "get":
-        await ctx.reply(product.screens.benefits, { reply_markup: subKeyboard(product.id) });
-        break;
-      case "mon":
-        await ctx.reply(product.screens.money, { reply_markup: subKeyboard(product.id) });
-        break;
-      case "faq":
-        await ctx.reply(product.screens.faq, { reply_markup: subKeyboard(product.id) });
-        break;
-      case "buy":
-        await showCheckout(ctx, product, from.id);
-        break;
-      case "pay":
-        await sendInvoice(ctx, product, from.id);
-        break;
-      case "files":
-        await resendFiles(ctx, product, from.id);
-        break;
-      default:
-        break;
+    if (action === "files") {
+      await resendFiles(ctx, product, from.id);
+      return;
     }
+    await showOpen(ctx, product.id);
   });
 
   bot.on("message:photo", async (ctx) => {
@@ -403,7 +364,7 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
       await ctx.reply("Пришли PDF как файл (скрепка → Файл), не как сжатое фото.");
       return;
     }
-    await ctx.reply("Жми кнопки под сообщением или команду /start.");
+    await ctx.reply("Открой приложение кнопкой «Открыть» или командой /start.");
   });
 
   bot.on("message:video", async (ctx) => {
@@ -433,7 +394,7 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
     if (!from) return;
     const text = ctx.message.text;
     if (text.startsWith("/")) {
-      await ctx.reply("Не знаю такую команду. Открой меню или нажми /start.");
+      await ctx.reply("Не знаю такую команду. Открой приложение кнопкой «Открыть» или нажми /start.");
       return;
     }
     const session = await repo.getSession(from.id);
@@ -453,102 +414,30 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
       await ctx.reply("Жду фото. Отмена — /cancel.");
       return;
     }
-    await ctx.reply("Жми кнопки под сообщением или команду /start.");
+    await ctx.reply("Открой приложение кнопкой «Открыть» или командой /start.");
   });
 
   bot.on("message", async (ctx) => {
-    await ctx.reply("Жми кнопки под сообщением или команду /start.");
+    await ctx.reply("Открой приложение кнопкой «Открыть» или командой /start.");
   });
 
   return bot;
 
-  function mainKeyboard(): InlineKeyboard {
-    const keyboard = new InlineKeyboard();
-    for (const product of listVisibleProducts()) {
-      keyboard.text(product.button, `p:${product.id}:home`).row();
-    }
-    keyboard.text("📚 Мои покупки", "go:mine");
-    return keyboard;
+  function openKeyboard(productId: string | null): InlineKeyboard {
+    const url = productId ? `${miniAppUrl(deps.appUrl)}#${productId}` : miniAppUrl(deps.appUrl);
+    return new InlineKeyboard().webApp("Открыть", url);
   }
 
-  function subKeyboard(productId: string): InlineKeyboard {
-    return new InlineKeyboard().text("⭐ Купить", `p:${productId}:buy`).text("⬅️ Назад", `p:${productId}:home`);
-  }
-
-  function productKeyboard(product: Product): InlineKeyboard {
-    return new InlineKeyboard()
-      .text("🎬 Что внутри", `p:${product.id}:in`)
-      .text("💡 Что я получу", `p:${product.id}:get`)
-      .row()
-      .text("💰 Монетизация", `p:${product.id}:mon`)
-      .text("❓ Вопросы", `p:${product.id}:faq`)
-      .row()
-      .text("⭐ Купить курс", `p:${product.id}:buy`)
-      .row()
-      .text("⬅️ Все продукты", "go:main");
-  }
-
-  function payKeyboard(product: Product): InlineKeyboard {
-    return new InlineKeyboard()
-      .text(`Оплатить ${product.priceStars} ⭐`, `p:${product.id}:pay`)
-      .row()
-      .text("⬅️ Назад", `p:${product.id}:home`);
-  }
-
-  async function showMain(ctx: Context, userId: number): Promise<void> {
-    const purchases = await repo.listActivePurchases(userId);
-    await sendPicture(ctx, MAIN_IMAGE_SLOT, MAIN_IMAGE_FILE, mainCaption(purchases.length > 0), mainKeyboard());
-  }
-
-  async function showProduct(ctx: Context, product: Product): Promise<void> {
-    const files = await repo.listProductFiles(product.id);
-    const promo = files.find((file) => file.kind === "video");
-    if (promo) {
-      try {
-        await ctx.replyWithVideo(promo.fileId);
-      } catch (error) {
-        log("error", "promo failed", { product: product.id, error: safeError(error) });
-      }
-    }
-    await sendPicture(ctx, product.coverSlot, product.coverFile, product.screens.home, productKeyboard(product));
-  }
-
-  async function showCheckout(ctx: Context, product: Product, userId: number): Promise<void> {
-    if (await giveOwned(ctx, product, userId)) return;
-    let text = product.screens.checkout;
-    if (isTestMode(deps.testMode) && isAdmin(userId)) text += testCheckoutNote(product.priceStars);
-    await ctx.reply(text, { reply_markup: payKeyboard(product) });
-  }
-
-  async function sendInvoice(ctx: Context, product: Product, userId: number): Promise<void> {
-    if (await giveOwned(ctx, product, userId)) return;
-    const amount = priceForUser({
-      publicPrice: product.priceStars,
-      userId,
-      adminId: deps.adminId,
-      testMode: deps.testMode,
+  async function showOpen(ctx: Context, productId: string | null): Promise<void> {
+    const product = productId ? getProduct(productId) : undefined;
+    await ctx.reply(START_TEXT, {
+      reply_markup: openKeyboard(product && !product.hidden ? product.id : null),
     });
-    await ctx.replyWithInvoice(
-      product.invoiceTitle,
-      product.invoiceDescription,
-      buildInvoicePayload(product.id, userId, deps.now().getTime()),
-      "XTR",
-      [{ label: product.invoiceLabel, amount }],
-      { provider_token: "" },
-    );
-  }
-
-  async function giveOwned(ctx: Context, product: Product, userId: number): Promise<boolean> {
-    if (!(await repo.hasActivePurchase(userId, product.id))) return false;
-    await ctx.reply(`У тебя уже есть «${product.title}». Лови файлы ещё раз.`);
-    const count = await sendDocuments(ctx, product);
-    if (count === 0) await ctx.reply("Файлы ещё не загружены. Напиши /paysupport — передам автору.");
-    return true;
   }
 
   async function resendFiles(ctx: Context, product: Product, userId: number): Promise<void> {
     if (!(await repo.hasActivePurchase(userId, product.id))) {
-      await ctx.reply("Сначала купи этот продукт.", { reply_markup: mainKeyboard() });
+      await ctx.reply("Сначала купи этот продукт.", { reply_markup: openKeyboard(product.id) });
       return;
     }
     await ctx.reply(`Файлы «${product.title}»:`);
@@ -559,7 +448,7 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
   async function showPurchases(ctx: Context, userId: number): Promise<void> {
     const rows = await repo.listActivePurchases(userId);
     if (rows.length === 0) {
-      await ctx.reply("Пока покупок нет.", { reply_markup: mainKeyboard() });
+      await ctx.reply("Пока покупок нет.", { reply_markup: openKeyboard(null) });
       return;
     }
     const keyboard = new InlineKeyboard();
@@ -578,45 +467,10 @@ export function createBot(deps: BotDeps, botInfo?: UserFromGetMe): Bot {
     return docs.length;
   }
 
-  async function sendPicture(
-    ctx: Context,
-    slot: string,
-    fileName: string,
-    caption: string,
-    keyboard: InlineKeyboard,
-  ): Promise<void> {
-    const fits = caption.length <= CAPTION_LIMIT;
-    const stored = await repo.getMedia(slot);
-    if (stored) {
-      try {
-        await ctx.replyWithPhoto(stored, {
-          caption: fits ? caption : undefined,
-          reply_markup: fits ? keyboard : undefined,
-        });
-        if (!fits) await ctx.reply(caption, { reply_markup: keyboard });
-        return;
-      } catch (error) {
-        log("error", "stored photo failed", { slot, error: safeError(error) });
-      }
-    }
-    const bytes = await deps.loadImage(fileName);
-    if (!bytes) {
-      await ctx.reply(caption, { reply_markup: keyboard });
-      return;
-    }
-    const sent = await ctx.replyWithPhoto(new InputFile(bytes, fileName), {
-      caption: fits ? caption : undefined,
-      reply_markup: fits ? keyboard : undefined,
-    });
-    const fileId = sent.photo?.[sent.photo.length - 1]?.file_id;
-    if (fileId) await repo.setMedia(slot, fileId, iso());
-    if (!fits) await ctx.reply(caption, { reply_markup: keyboard });
-  }
-
   async function takeFile(ctx: Context, file: StagedFile): Promise<void> {
     const from = ctx.from;
     if (!from || !isAdmin(from.id)) {
-      await ctx.reply("Жми кнопки под сообщением или команду /start.");
+      await ctx.reply("Открой приложение кнопкой «Открыть» или командой /start.");
       return;
     }
     const session = await repo.getSession(from.id);
