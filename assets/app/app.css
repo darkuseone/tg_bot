@@ -221,7 +221,7 @@ main {
 
 .hero-art {
   display: block;
-  border-radius: 22px 22px 0 0;
+  border-radius: 22px;
   overflow: hidden;
   line-height: 0;
   background: #6e3cc4;
@@ -245,11 +245,11 @@ main {
 /* Source is 1080×1350. Title ink is y 128–261; the TV bezel starts at y 461. */
 .hero-slice-title {
   height: 0;
-  padding-bottom: calc(100% * 212 / 1080);
+  padding-bottom: calc(100% * 250 / 1080);
 }
 
 .hero-slice-title img {
-  top: calc(100% * -88 / 212);
+  top: calc(100% * -50 / 250);
 }
 
 .hero-slice-tv {
@@ -513,21 +513,53 @@ h3 {
 .faq details + details { border-top: 1px solid rgba(255, 255, 255, 0.12); }
 
 .faq summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   padding: 14px 0;
   cursor: pointer;
   font-weight: 800;
   font-size: 16px;
+  list-style: none;
 }
+
+.faq summary::-webkit-details-marker { display: none; }
+
+.faq summary::marker { content: none; }
+
+.faq summary::before {
+  content: "";
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg);
+  transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.faq details[open] > summary::before { transform: rotate(45deg); }
 
 .faq details > .faq-panel {
-  display: block;
-  overflow: hidden;
-  max-height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.faq details:not([open]) > .faq-panel { display: block; }
+.faq details[open] > .faq-panel { grid-template-rows: 1fr; }
 
-.faq details[open] > .faq-panel { max-height: none; }
+.faq details:not([open]) > .faq-panel { display: grid; }
+
+.faq-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.faq details[open] > .faq-panel > .faq-clip {
+  overflow: visible;
+  min-height: auto;
+}
 
 .faq-clip p { margin: 0; padding: 0 0 12px; }
 
@@ -600,7 +632,8 @@ body.paying { padding-bottom: calc(280px + env(safe-area-inset-bottom)); }
 @media (prefers-reduced-motion: reduce) {
   .rise, .blob, .avatar::before, .down span, .cta, .hero::before { animation: none; }
   #sparks, .aurora { display: none; }
-  .faq details > .faq-panel { transition: none; }
+  .faq details > .faq-panel,
+  .faq summary::before { transition: none; }
 }
 
 .motion-off #sparks, .motion-off .aurora { display: none; }
