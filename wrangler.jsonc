@@ -30,7 +30,7 @@
       "binding": "DB",
       "database_name": "markus-brown",
       // Replaced with the real id when the database is created.
-      "database_id": "00000000-0000-4000-8000-000000000001",
+      "database_id": "5c21152f-1d30-48d7-9bd3-0ff3a66d8e90",
       "migrations_dir": "migrations"
     }
   ],
