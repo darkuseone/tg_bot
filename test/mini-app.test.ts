@@ -48,8 +48,11 @@ describe("mini app copy", () => {
     const js = readFileSync("assets/app/app.js", "utf8");
     const css = readFileSync("assets/app/app.css", "utf8");
     const ui = `${html}\n${js}\n${css}`;
-    expect(html).toContain("Привет, я Markus Brown");
-    expect(html).toContain("<strong>ИИ не магия, а суперсила. Забирай свою</strong>");
+    const home = html.split('id="course"')[0] ?? html;
+    expect(html).toContain("Привет, я Markus Brown 👋");
+    expect(html).toContain("<strong>ИИ не магия, а суперсила. Забирай свою →</strong>");
+    expect(html).toContain("Здесь собраны мои авторские курсы 🚀");
+    expect(home).not.toContain("990");
     expect(html).toContain("marcus-photo.jpg");
     expect(html).toContain("pixelverse-tv.jpg");
     expect(html).not.toContain("pixelated");
@@ -57,7 +60,8 @@ describe("mini app copy", () => {
     expect(ui).not.toContain("Добро пожаловать в мой мир ИИ");
     expect(ui).not.toContain("anthropic");
     expect(html).not.toContain("<video");
-    expect(html).not.toContain("<canvas");
+    expect(html).toContain('id="sparks"');
+    expect(js).toContain("requestAnimationFrame");
     expect(html).toContain("Своя мультстудия с телефона или с компьютера");
     expect(html).toContain("Любой сериал на любую тему: твоя задумка, твои герои");
     expect(html).toContain("Площадки платят по своим правилам: реклама в Shorts, Reels и TikTok");

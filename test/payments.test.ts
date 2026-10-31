@@ -163,7 +163,9 @@ describe("start links and copy", () => {
   });
 
   it("uses the mini app greeting, the course text, and generalized terms", () => {
-    expect(START_TEXT).toBe("Привет, я Markus Brown\nИИ не магия, а суперсила. Забирай свою");
+    expect(START_TEXT).toBe(
+      "Привет, я Markus Brown 👋\nИИ не магия, а суперсила. Забирай свою →\nЗдесь собраны мои авторские курсы 🚀",
+    );
     expect(START_TEXT).not.toContain("Добро пожаловать");
     expect(PIXEL_HOME.startsWith("Привет! Это PIXEL VERSE")).toBe(true);
     expect(PIXEL_CHECKOUT).toBe("Ты готов погрузиться в мир ИИ?\nХватит почты и телефона или компьютера.");

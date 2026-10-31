@@ -1,4 +1,57 @@
 const PRODUCT = "pixelverse";
+const SPARK = "rgba(226, 59, 59,";
+
+const sparksCanvas = document.getElementById("sparks");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const sparks = Array.from({ length: 36 }, () => makeSpark(true));
+let sparkFrame = 0;
+let sparkStamp = 0;
+
+function makeSpark(anywhere) {
+  return {
+    x: anywhere ? Math.random() : -0.04,
+    y: Math.random(),
+    speed: 0.08 + Math.random() * 0.14,
+    drift: (Math.random() - 0.5) * 0.015,
+    alpha: 0.35 + Math.random() * 0.4,
+    length: 5 + Math.random() * 7,
+  };
+}
+
+function resizeSparks() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const width = sparksCanvas.clientWidth;
+  const height = sparksCanvas.clientHeight;
+  sparksCanvas.width = Math.max(1, Math.floor(width * dpr));
+  sparksCanvas.height = Math.max(1, Math.floor(height * dpr));
+  sparksCanvas.getContext("2d").setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function drawSparks(now) {
+  const ctx = sparksCanvas.getContext("2d");
+  const width = sparksCanvas.clientWidth;
+  const height = sparksCanvas.clientHeight;
+  const step = Math.min(0.05, (now - (sparkStamp || now)) / 1000 || 0.016);
+  sparkStamp = now;
+  ctx.fillStyle = "#0B0B0D";
+  ctx.fillRect(0, 0, width, height);
+  for (const spark of sparks) {
+    spark.x += spark.speed * step;
+    spark.y += spark.drift * step;
+    if (spark.x > 1.05 || spark.y < -0.05 || spark.y > 1.05) Object.assign(spark, makeSpark(false));
+    const x = spark.x * width;
+    const y = spark.y * height;
+    ctx.fillStyle = `${SPARK} ${spark.alpha})`;
+    ctx.fillRect(x, y, spark.length, 2);
+  }
+}
+
+function loopSparks(now) {
+  drawSparks(now);
+  if (!reduceMotion) sparkFrame = window.requestAnimationFrame(loopSparks);
+}
+
+if (reduceMotion) document.documentElement.classList.add("motion-off");
 
 const home = document.getElementById("home");
 const course = document.getElementById("course");
@@ -182,6 +235,11 @@ function boot() {
       if (history.state && history.state.screen === "course") history.back();
       else showHome();
     });
+  }
+  if (!reduceMotion) {
+    resizeSparks();
+    window.addEventListener("resize", resizeSparks);
+    loopSparks(performance.now());
   }
   const opened = refresh();
   if (location.hash === `#${PRODUCT}`) showCourse(true);

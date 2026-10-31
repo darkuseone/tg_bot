@@ -9,18 +9,21 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
+    <canvas id="sparks" aria-hidden="true"></canvas>
     <main>
       <section id="home">
         <img class="portrait" src="/media/marcus-photo.jpg" alt="Markus Brown" />
-        <h1 class="hello">Привет, я Markus Brown</h1>
-        <p class="tagline"><strong>ИИ не магия, а суперсила. Забирай свою</strong></p>
+        <div class="copy">
+          <h1 class="hello">Привет, я Markus Brown 👋</h1>
+          <p class="tagline"><strong>ИИ не магия, а суперсила. Забирай свою →</strong></p>
+          <p class="courses">Здесь собраны мои авторские курсы 🚀</p>
+        </div>
         <p class="down" aria-hidden="true">↓</p>
         <div class="catalog" id="catalog">
           <button type="button" class="card" data-product="pixelverse">
             <span class="kicker">КУРС</span>
             <span class="name">PIXEL VERSE</span>
             <span class="line">Мультстудия в кармане</span>
-            <span class="price">990 ⭐</span>
             <span class="chevron" aria-hidden="true">›</span>
           </button>
         </div>
