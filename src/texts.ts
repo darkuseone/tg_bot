@@ -117,7 +117,7 @@ export const FILE_CAPTIONS = [
   "Стартовый набор",
 ];
 
-export const MAIN_IMAGE_FILE = "markus-main.jpg";
+export const MAIN_IMAGE_FILE = "brand-cover.jpg";
 export const MAIN_IMAGE_SLOT = "main";
 
 export function mainCaption(returning: boolean): string {
