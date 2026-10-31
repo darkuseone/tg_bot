@@ -20,7 +20,9 @@ const FILES: Record<string, { name: string; type: string; cache: string }> = {
   "/app/app.css": { name: "app/app.css", type: "text/css; charset=utf-8", cache: "no-cache" },
   "/app/app.js": { name: "app/app.js", type: "text/javascript; charset=utf-8", cache: "no-cache" },
   "/media/brand-cover.jpg": { name: "brand-cover.jpg", type: "image/jpeg", cache: "public, max-age=3600" },
+  "/media/marcus-photo.jpg": { name: "marcus-photo.jpg", type: "image/jpeg", cache: "public, max-age=3600" },
   "/media/pixelverse-cover.jpg": { name: "pixelverse-cover.jpg", type: "image/jpeg", cache: "public, max-age=3600" },
+  "/media/pixelverse-tv.jpg": { name: "pixelverse-tv.jpg", type: "image/jpeg", cache: "public, max-age=3600" },
   "/media/press-start-2p.woff2": { name: "press-start-2p.woff2", type: "font/woff2", cache: "public, max-age=86400" },
 };
 

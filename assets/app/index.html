@@ -3,24 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#070103" />
+    <meta name="theme-color" content="#07080c" />
     <title>Markus Brown</title>
     <link rel="stylesheet" href="/app/app.css" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
-    <canvas id="universe" aria-hidden="true"></canvas>
+    <div class="quiet" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
     <main>
       <section id="home">
-        <div class="portrait-wrap">
-          <canvas id="portrait" width="56" height="56" aria-hidden="true"></canvas>
-        </div>
-        <h1 class="hello">Привет, я <span class="pixel">Markus Brown</span></h1>
-        <p class="tagline">ИИ не магия, а суперсила, забирай свою</p>
+        <img class="portrait" src="/media/marcus-photo.jpg" alt="Markus Brown" />
+        <h1 class="hello">Привет, я Markus Brown</h1>
+        <p class="tagline"><strong>ИИ не магия, а суперсила. Забирай свою</strong></p>
+        <p class="down" aria-hidden="true">↓</p>
         <div class="catalog" id="catalog">
           <button type="button" class="card" data-product="pixelverse">
             <span class="kicker">КУРС</span>
-            <span class="pixel name">PIXEL VERSE</span>
+            <span class="name">PIXEL VERSE</span>
             <span class="line">Мультстудия в кармане</span>
             <span class="price">990 ⭐</span>
             <span class="chevron" aria-hidden="true">›</span>
@@ -31,8 +32,8 @@
 
       <section id="course" hidden>
         <button type="button" class="back" id="back">‹ Главная</button>
-        <p class="kicker pixel">PIXEL VERSE</p>
-        <img class="cover" src="/media/pixelverse-cover.jpg" alt="PIXEL VERSE" />
+        <p class="kicker">PIXEL VERSE</p>
+        <img class="cover" src="/media/pixelverse-tv.jpg" alt="PIXEL VERSE" />
         <h2>Мультстудия в кармане</h2>
         <p class="promise">
           Полный курс от и до. Легко: справится человек, который просто умеет пользоваться телефоном или компьютером и ни разу не работал с нейросетями.
@@ -64,14 +65,19 @@
           <li>Чек-листы</li>
           <li>Стартовый набор</li>
         </ul>
-        <details>
-          <summary>Что получу</summary>
-          <p>Своя мультстудия с телефона и сезон коротких серий.</p>
-        </details>
-        <details>
-          <summary>Монетизация</summary>
-          <p>Площадки платят по своим правилам. Доход не обещаем.</p>
-        </details>
+        <h3>Что получишь</h3>
+        <ul class="inside">
+          <li>Своя мультстудия с телефона или с компьютера</li>
+          <li>Любой сериал на любую тему: твоя задумка, твои герои</li>
+          <li>Готовые промты, чек-листы и стартовый набор</li>
+          <li>Без рисования и без программирования</li>
+        </ul>
+        <h3>Монетизация</h3>
+        <ul class="inside">
+          <li>Площадки платят по своим правилам: реклама в Shorts, Reels и TikTok</li>
+          <li>Бренды и интеграции, когда сериал узнают</li>
+          <li>Свои продукты и мультики на заказ</li>
+        </ul>
         <details>
           <summary>Вопросы</summary>
           <p>Рисовать и программировать не нужно. Хватит телефона или компьютера.</p>
