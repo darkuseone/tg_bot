@@ -15,10 +15,10 @@ const CSP = [
 ].join("; ");
 
 const FILES: Record<string, { name: string; type: string; cache: string }> = {
-  "/app": { name: "app/index.html", type: "text/html; charset=utf-8", cache: "no-cache" },
-  "/app/": { name: "app/index.html", type: "text/html; charset=utf-8", cache: "no-cache" },
-  "/app/app.css": { name: "app/app.css", type: "text/css; charset=utf-8", cache: "no-cache" },
-  "/app/app.js": { name: "app/app.js", type: "text/javascript; charset=utf-8", cache: "no-cache" },
+  "/app": { name: "app/index.html", type: "text/html; charset=utf-8", cache: "no-cache, no-store, must-revalidate" },
+  "/app/": { name: "app/index.html", type: "text/html; charset=utf-8", cache: "no-cache, no-store, must-revalidate" },
+  "/app/app.css": { name: "app/app.css", type: "text/css; charset=utf-8", cache: "no-cache, no-store, must-revalidate" },
+  "/app/app.js": { name: "app/app.js", type: "text/javascript; charset=utf-8", cache: "no-cache, no-store, must-revalidate" },
   "/media/brand-cover.jpg": { name: "brand-cover.jpg", type: "image/jpeg", cache: "public, max-age=3600" },
   "/media/marcus-photo.jpg": { name: "marcus-photo.jpg", type: "image/jpeg", cache: "public, max-age=3600" },
   "/media/pixelverse-cover.jpg": { name: "pixelverse-cover.jpg", type: "image/jpeg", cache: "public, max-age=3600" },

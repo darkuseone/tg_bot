@@ -69,7 +69,7 @@ describe("mini app copy", () => {
     expect(js).toContain("139, 92, 246");
     expect(js).toContain("59, 130, 246");
     expect(css).toContain("-webkit-backdrop-filter");
-    expect(css).toMatch(/\.home-line\s*\{[^}]*font-size:\s*20px/);
+    expect(css).toMatch(/\.home-line\s*\{[^}]*font-size:\s*18px/);
     expect(css).toMatch(/white-space:\s*nowrap/);
     expect(css).toMatch(/\.home-line\s*\{[^}]*font-weight:\s*800/);
     expect(html).toContain("Своя мультстудия с телефона или с компьютера");

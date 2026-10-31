@@ -275,6 +275,14 @@ function boot() {
   if (tg) {
     tg.ready();
     tg.expand();
+    const applyViewport = () => {
+      const height = tg.viewportStableHeight || tg.viewportHeight;
+      if (height) {
+        document.documentElement.style.setProperty("--tg-viewport-stable-height", `${height}px`);
+      }
+    };
+    applyViewport();
+    if (typeof tg.onEvent === "function") tg.onEvent("viewportChanged", applyViewport);
     try {
       tg.setHeaderColor("#0b0b12");
       tg.setBackgroundColor("#0b0b12");
