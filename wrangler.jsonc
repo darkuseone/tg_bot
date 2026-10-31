@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "markus-brown",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-31",
+  "compatibility_flags": ["nodejs_compat"],
+  "upload_source_maps": true,
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 1 }
+  },
+  "assets": {
+    "directory": "./assets",
+    "binding": "ASSETS",
+    // Every request, including the webhook, is handled by the Worker.
+    // Pictures are read through the ASSETS binding and are not a public page.
+    "run_worker_first": true
+  },
+  "vars": {
+    // "1" — the owner (ADMIN_ID) pays 1 Star, everyone else pays the catalog price.
+    // Set to "0" after the test purchase and deploy again.
+    "TEST_MODE": "1"
+  },
+  "secrets": {
+    "required": ["TELEGRAM_BOT_TOKEN", "ADMIN_ID", "WEBHOOK_SECRET"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "markus-brown",
+      // Replaced with the real id when the database is created.
+      "database_id": "00000000-0000-4000-8000-000000000001",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "triggers": {
+    "crons": ["* * * * *"]
+  }
+}
