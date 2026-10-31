@@ -269,6 +269,46 @@ openChat.addEventListener("click", async () => {
   if (typeof tg.close === "function") tg.close();
 });
 
+function bindFaq() {
+  document.querySelectorAll(".faq details").forEach((details) => {
+    const panel = details.querySelector(".faq-panel");
+    if (!panel) return;
+    let animation = null;
+    const measure = () => {
+      const previous = panel.style.maxHeight;
+      panel.style.maxHeight = "none";
+      const height = panel.scrollHeight;
+      panel.style.maxHeight = previous || "0px";
+      return height;
+    };
+    const play = (from, to) => {
+      if (animation) animation.cancel();
+      panel.style.maxHeight = `${from}px`;
+      if (reduceMotion) {
+        panel.style.maxHeight = `${to}px`;
+        return;
+      }
+      animation = panel.animate(
+        [{ maxHeight: `${from}px` }, { maxHeight: `${to}px` }],
+        { duration: 280, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)", fill: "forwards" },
+      );
+      animation.onfinish = () => {
+        panel.style.maxHeight = `${to}px`;
+        animation.cancel();
+        animation = null;
+      };
+    };
+    panel.style.maxHeight = "0px";
+    details.addEventListener("toggle", () => {
+      if (details.open) {
+        play(0, measure());
+        return;
+      }
+      play(panel.getBoundingClientRect().height, 0);
+    });
+  });
+}
+
 function boot() {
   const tg = telegram();
   if (!tg || !tg.initData) preview.hidden = false;
@@ -295,6 +335,7 @@ function boot() {
       else showHome();
     });
   }
+  bindFaq();
   if (!reduceMotion) {
     resizeSparks();
     window.addEventListener("resize", resizeSparks);

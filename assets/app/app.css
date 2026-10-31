@@ -210,19 +210,58 @@ main {
 
 .hero-inner {
   position: relative;
-  border-radius: 28px;
+  border-radius: 22px;
   overflow: hidden;
   background: #120810;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  isolation: isolate;
 }
 
 .hero:active .hero-inner { transform: scale(0.98); }
 
-.hero-cover {
-  position: static;
+.hero-art {
+  display: block;
+  border-radius: 22px 22px 0 0;
+  overflow: hidden;
+  line-height: 0;
+  background: #6e3cc4;
+}
+
+.hero-slice {
+  position: relative;
   display: block;
   width: 100%;
+  overflow: hidden;
+}
+
+.hero-slice img {
+  position: absolute;
+  left: 0;
+  width: 100%;
   height: auto;
+  max-width: none;
+}
+
+/* Source is 1080×1350. Title ink is y 128–261; the TV bezel starts at y 461. */
+.hero-slice-title {
+  height: 0;
+  padding-bottom: calc(100% * 212 / 1080);
+}
+
+.hero-slice-title img {
+  top: calc(100% * -88 / 212);
+}
+
+.hero-slice-tv {
+  height: 0;
+  padding-bottom: calc(100% * 926 / 1080);
+  margin-top: calc(100% * -926 * 0.03 / 1080);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 3%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 3%, #000 100%);
+}
+
+.hero-slice-tv img {
+  top: calc(100% * -424 / 926);
 }
 
 .hero-body {
@@ -466,11 +505,31 @@ h3 {
 .badge.rose { background: rgba(255, 45, 85, 0.22); }
 .badge.blue { background: rgba(59, 130, 246, 0.22); }
 
-details { margin-top: 14px; padding: 4px 16px 8px; }
+.faq {
+  margin-top: 14px;
+  padding: 0 16px;
+}
 
-summary { padding: 12px 0; cursor: pointer; font-weight: 800; font-size: 16px; }
+.faq details + details { border-top: 1px solid rgba(255, 255, 255, 0.12); }
 
-details p { margin: 0 0 12px; }
+.faq summary {
+  padding: 14px 0;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.faq details > .faq-panel {
+  display: block;
+  overflow: hidden;
+  max-height: 0;
+}
+
+.faq details:not([open]) > .faq-panel { display: block; }
+
+.faq details[open] > .faq-panel { max-height: none; }
+
+.faq-clip p { margin: 0; padding: 0 0 12px; }
 
 body.paying { padding-bottom: calc(280px + env(safe-area-inset-bottom)); }
 
@@ -541,6 +600,7 @@ body.paying { padding-bottom: calc(280px + env(safe-area-inset-bottom)); }
 @media (prefers-reduced-motion: reduce) {
   .rise, .blob, .avatar::before, .down span, .cta, .hero::before { animation: none; }
   #sparks, .aurora { display: none; }
+  .faq details > .faq-panel { transition: none; }
 }
 
 .motion-off #sparks, .motion-off .aurora { display: none; }

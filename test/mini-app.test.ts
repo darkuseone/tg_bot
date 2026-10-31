@@ -77,6 +77,14 @@ describe("mini app copy", () => {
     expect(html).toContain("Площадки платят по своим правилам: реклама в Shorts, Reels и TikTok");
     expect(html).toContain("Бренды и интеграции, когда сериал узнают");
     expect(html).toContain("Свои продукты и мультики на заказ");
+    expect(html).toContain("Рисовать и программировать не нужно. Хватит телефона или компьютера.");
+    expect(html).toContain("Я никогда не работал с ИИ — у меня получится?");
+    expect(html).toContain("Да. Курс очень подробный и рассчитан на новичков: всё разобрано пошагово, с готовыми промтами. Даже если ты ни разу не открывал нейросети, сможешь повторить и сделать свой мульт.");
+    expect(html).toContain("Нужен ли мощный компьютер?");
+    expect(html).toContain("Нет. Всё делается с телефона или с обычного ПК.");
+    expect(html).toContain("Что я получу после оплаты?");
+    expect(html).toContain("Материалы курса придут сразу в этот чат с ботом. Они останутся у тебя, можно проходить в своём темпе.");
+    expect(css).toContain("border-radius: 22px");
     expect(html).toContain("Купить за 990 ⭐");
     expect(html).toContain("Открыть в чате");
     expect(html).toContain("Ты готов погрузиться в мир ИИ?");

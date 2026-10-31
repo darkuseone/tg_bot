@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#0b0b12" />
     <title>Markus Brown</title>
-    <link rel="stylesheet" href="/app/app.css?v=e369f81d03" />
+    <link rel="stylesheet" href="/app/app.css?v=1badd7cc5f" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
@@ -29,7 +29,14 @@
         <div class="catalog" id="catalog">
           <button type="button" class="hero rise" style="--d: 3" data-product="pixelverse">
             <span class="hero-inner">
-              <img class="hero-cover" src="/media/pixelverse-tv.jpg" alt="PIXEL VERSE" />
+              <span class="hero-art">
+                <span class="hero-slice hero-slice-title">
+                  <img src="/media/pixelverse-tv.jpg" alt="PIXEL VERSE" />
+                </span>
+                <span class="hero-slice hero-slice-tv">
+                  <img src="/media/pixelverse-tv.jpg" alt="" />
+                </span>
+              </span>
               <span class="hero-body">
                 <span class="pill">КУРС</span>
                 <span class="hero-name">PIXEL VERSE</span>
@@ -115,10 +122,40 @@
             <li>Свои продукты и мультики на заказ</li>
           </ul>
         </section>
-        <details class="glass">
-          <summary>Вопросы</summary>
-          <p>Рисовать и программировать не нужно. Хватит телефона или компьютера.</p>
-        </details>
+        <div class="faq glass">
+          <details>
+            <summary>Вопросы</summary>
+            <div class="faq-panel">
+              <div class="faq-clip">
+                <p>Рисовать и программировать не нужно. Хватит телефона или компьютера.</p>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary>Я никогда не работал с ИИ — у меня получится?</summary>
+            <div class="faq-panel">
+              <div class="faq-clip">
+                <p>Да. Курс очень подробный и рассчитан на новичков: всё разобрано пошагово, с готовыми промтами. Даже если ты ни разу не открывал нейросети, сможешь повторить и сделать свой мульт.</p>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary>Нужен ли мощный компьютер?</summary>
+            <div class="faq-panel">
+              <div class="faq-clip">
+                <p>Нет. Всё делается с телефона или с обычного ПК.</p>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary>Что я получу после оплаты?</summary>
+            <div class="faq-panel">
+              <div class="faq-clip">
+                <p>Материалы курса придут сразу в этот чат с ботом. Они останутся у тебя, можно проходить в своём темпе.</p>
+              </div>
+            </div>
+          </details>
+        </div>
       </section>
     </main>
 
@@ -131,6 +168,6 @@
       <button type="button" class="pay ghost" id="open-chat" hidden>Открыть в чате</button>
     </div>
     <p id="toast" class="toast glass" hidden role="status"></p>
-    <script src="/app/app.js?v=e369f81d03"></script>
+    <script src="/app/app.js?v=1badd7cc5f"></script>
   </body>
 </html>
